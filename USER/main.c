@@ -38,15 +38,14 @@ char Uart2_Buf[Buf2_Max]; //串口2接收缓存
 u8 Times=0,First_Int = 0,shijian=0;
 vu8 Timer0_start;	//定时器0延时启动计数器
 
-u8 content[200];//TCP发送内容
+u8 content[200]="M1001/12312341234/8.00/";//TCP发送内容
 
 u8 display1[16];	
 u8 display2[16];
 u8 display3[16];	
 u8 display4[16];
 
-u16 adcx;
-float temp;
+u16 adcx,temp;
 	
 u8 reclen=0;  
 int i;
@@ -75,7 +74,9 @@ int main(void)
 {
 
 	SysTick_Init_Config();
-	GPIO_Config();	
+//	GPIO_Config();	
+	
+	delay_init();
 	
 	Adc_Init();		  					//ADC初始化	    
 	
@@ -86,25 +87,38 @@ int main(void)
 	I2C_Configuration();				//I2C初始化
 	OLED_Init();						//OLED初始化
 	OLED_Fill(0x00);					//OLED全屏灭
+
+//	Wait_CREG();   					    //查询等待模块注册成功
+//	Second_AT_Command("AT+CSQ","+CSQ",3);
+//	sprintf((char*)display1,"RSSI:%s",Uart2_Buf);
+//	OLED_ShowStr(0,0,display1,2);		//显示信号强度
 	
-	Wait_CREG();   					    //查询等待模块注册成功
-	
-	Second_AT_Command("AT+CSQ","+CSQ",3);
-	sprintf((char*)display1,"RSSI:%d",(Uart2_Buf[5]-48)*10+Uart2_Buf[6]-48);
-	OLED_ShowStr(0,0,display1,2);		//显示信号强度
+	sprintf((char*)display1,"Battery:");
+	OLED_ShowStr(0,0,display1,2);	
 	
 	adcx=Get_Adc_Average(ADC_Channel_1,10);
-	temp=(float)adcx*(3.3/4096)/0.21;
-	adcx=temp;
-	temp-=adcx;
-	temp*=100;
-	sprintf((char*)display3,"Voltage:%02d.%02d V",adcx,(int)temp);
-	OLED_ShowStr(64,0,display1,2);		//显示电池电压（0-3.3V）
+	temp=(int)adcx*100/4096;
+	sprintf((char*)display1,"%02d %%",temp);
+	OLED_ShowStr(89,0,display1,2);		//显示电池电压（百分比）
 	
-	Init_TCP();
+	sprintf((char*)display2,"GPRS Connecting...");
+	OLED_ShowStr(0,4,display2,1);		//显示连接状态
 	
+	Init_TCP();	
+	
+	sprintf((char*)display2,"                  ");
+	OLED_ShowStr(0,4,display2,1);		//显示连接状态
+	
+	sprintf((char*)display2,"Upload Data:");
+	OLED_ShowStr(0,2,display2,2);		//显示连接状态
+
 	while(1)
 	{	
+		adcx=Get_Adc_Average(ADC_Channel_1,10);
+		temp=(int)adcx*100/4096;
+		sprintf((char*)display1,"%02d %%",temp);
+		OLED_ShowStr(89,0,display1,2);		//显示电池电压（百分比）
+		
 		if(USART1_RX_STA&0X8000)				//接收到一次数据了
 		{
 			reclen=USART1_RX_STA&0X7FFF;		//得到数据长度
@@ -114,10 +128,10 @@ int main(void)
 			{
 				content[i]=USART1_RX_BUF[i];		
 			}
-			OLED_ShowStr(0,2,USART1_RX_BUF,2);  //显示接收数据
+			OLED_ShowStr(0,4,USART1_RX_BUF,1);  //显示接收数据
+						
+			Send_TCP();								//TCP协议发送数据到服务器端口
 		}	
-		
-		Send_TCP();								//TCP协议发送数据到服务器端口
 		
 	}
 }
