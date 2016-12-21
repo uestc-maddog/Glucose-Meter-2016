@@ -82,7 +82,7 @@ void USART1_Init_Config(u32 bound)
 *******************************************************************************/
 void UART1_SendString(unsigned char* s)
 {
-	while(*s)//¼ì²â×Ö·û´®½áÊø·û
+	while(*s!=0xFF)//¼ì²â×Ö·û´®½áÊø·û
 	{
 		while(USART_GetFlagStatus(USART1, USART_FLAG_TC)==RESET); 
 		USART_SendData(USART1 ,*s++);//·¢ËÍµ±Ç°×Ö·û

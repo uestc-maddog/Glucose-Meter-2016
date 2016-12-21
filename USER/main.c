@@ -39,7 +39,7 @@ char Uart2_Buf[Buf2_Max]; //串口2接收缓存
 u8 Times=0,First_Int = 0,shijian=0;
 vu8 Timer0_start;	//定时器0延时启动计数器
 
-extern u8 content[100];
+extern u8 content[6][100];
 
 u8 display1[16];	
 u8 display2[16];
@@ -121,9 +121,9 @@ int main(void)
 
 	for(i=0;i<6;i++)
 	{
-		sprintf((char*)display1,"Send:       %d/6",i+1);
-		OLED_ShowStr(0,6,display1,1);  //显示接收数据
-					
+		sprintf((char*)display1,"Send:            %d/6",i+1);
+		OLED_ShowStr(0,6,display1,1);
+		
 		Send_TCP();								//TCP协议发送数据到服务器端口
 	}	
 	
@@ -278,7 +278,7 @@ void Send_TCP(void)
 {
 
 	Second_AT_Command("AT+CIPSEND",">",3); //发送数据长度：25（具体的计算方法看串口调试比较）接收到“>”才发送短信内容
-	UART2_SendString((char*)content);     //发送短信内容
+	UART2_SendString((char*)content[i]);     //发送短信内容
 	USART_SendData(USART2 ,0X1A);  //发送结束符
 	UART2_SendLR();
 }

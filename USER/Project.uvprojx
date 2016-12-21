@@ -175,7 +175,7 @@
           </Flash1>
           <bUseTDR>0</bUseTDR>
           <Flash2>Segger\JL2CM3.dll</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -419,11 +419,6 @@
               <FilePath>.\stm32f10x_it.c</FilePath>
             </File>
             <File>
-              <FileName>delay.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BSP\delay\delay.c</FilePath>
-            </File>
-            <File>
               <FileName>sys.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\BSP\sys\sys.c</FilePath>
@@ -437,6 +432,11 @@
               <FileName>usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\BSP\USART\usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\delay\delay.c</FilePath>
             </File>
             <File>
               <FileName>Led.c</FileName>

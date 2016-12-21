@@ -1,9 +1,9 @@
 --cpu Cortex-M3
 ".\output\main.o"
 ".\output\stm32f10x_it.o"
-".\output\delay.o"
 ".\output\sys.o"
 ".\output\usart.o"
+".\output\delay.o"
 ".\output\led.o"
 ".\output\systick.o"
 ".\output\timer.o"
