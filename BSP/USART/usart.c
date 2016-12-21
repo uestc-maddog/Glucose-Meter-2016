@@ -80,7 +80,7 @@ void USART1_Init_Config(u32 bound)
 * 返回    : 无 
 * 说明    : 无
 *******************************************************************************/
-void UART1_SendString(char* s)
+void UART1_SendString(unsigned char* s)
 {
 	while(*s)//检测字符串结束符
 	{

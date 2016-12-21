@@ -9,6 +9,7 @@
 ".\output\timer.o"
 ".\output\oled_i2c.o"
 ".\output\adc.o"
+".\output\meter.o"
 ".\output\misc.o"
 ".\output\stm32f10x_exti.o"
 ".\output\stm32f10x_gpio.o"

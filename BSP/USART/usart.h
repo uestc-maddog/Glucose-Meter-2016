@@ -6,7 +6,7 @@
 #define USART1_REC_MAXLEN 200	//最大接收数据长度
 
 void USART1_Init_Config(u32 bound);
-void UART1_SendString(char* s);
+void UART1_SendString(unsigned char* s);
 void USART2_Init_Config(u32 bound);
 void UART2_SendString(char* s);
 void UART1_SendLR(void);

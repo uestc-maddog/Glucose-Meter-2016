@@ -30,6 +30,7 @@
 #include "stdio.h"
 #include "adc.h"
 #include "stm32f10x_adc.h"
+#include "meter.h"
 
 #define Buf2_Max 200 					  //串口2缓存长度
 
@@ -38,12 +39,10 @@ char Uart2_Buf[Buf2_Max]; //串口2接收缓存
 u8 Times=0,First_Int = 0,shijian=0;
 vu8 Timer0_start;	//定时器0延时启动计数器
 
-u8 content[200]="M1001/12312341234/8.00/";//TCP发送内容
+extern u8 content[100];
 
 u8 display1[16];	
 u8 display2[16];
-u8 display3[16];	
-u8 display4[16];
 
 u16 adcx,temp;
 	
@@ -97,7 +96,7 @@ int main(void)
 	OLED_ShowStr(0,0,display1,2);	
 	
 	adcx=Get_Adc_Average(ADC_Channel_1,10);
-	temp=(int)adcx*100/4096;
+	temp=(int)adcx*157/4096;
 	sprintf((char*)display1,"%02d %%",temp);
 	OLED_ShowStr(89,0,display1,2);		//显示电池电压（百分比）
 	
@@ -107,33 +106,28 @@ int main(void)
 	Init_TCP();	
 	
 	sprintf((char*)display2,"                  ");
-	OLED_ShowStr(0,4,display2,1);		//显示连接状态
+	OLED_ShowStr(0,4,display2,1);	
 	
 	sprintf((char*)display2,"Upload Data:");
-	OLED_ShowStr(0,2,display2,2);		//显示连接状态
+	OLED_ShowStr(0,2,display2,1);
+	
+	getdata();
+	transform();
 
-	while(1)
-	{	
-		adcx=Get_Adc_Average(ADC_Channel_1,10);
-		temp=(int)adcx*100/4096;
-		sprintf((char*)display1,"%02d %%",temp);
-		OLED_ShowStr(89,0,display1,2);		//显示电池电压（百分比）
-		
-		if(USART1_RX_STA&0X8000)				//接收到一次数据了
-		{
-			reclen=USART1_RX_STA&0X7FFF;		//得到数据长度
-			USART1_RX_BUF[reclen]=0;	 		//加入结束符
-			USART1_RX_STA=0;
-			for(i=0;i<reclen;i++)
-			{
-				content[i]=USART1_RX_BUF[i];		
-			}
-			OLED_ShowStr(0,4,USART1_RX_BUF,1);  //显示接收数据
-						
-			Send_TCP();								//TCP协议发送数据到服务器端口
-		}	
-		
-	}
+	adcx=Get_Adc_Average(ADC_Channel_1,10);
+	temp=(int)adcx*157/4096;
+	sprintf((char*)display1,"%02d %%",temp);
+	OLED_ShowStr(89,0,display1,2);		//显示电池电压（百分比）
+
+	for(i=0;i<6;i++)
+	{
+		sprintf((char*)display1,"Send:       %d/6",i+1);
+		OLED_ShowStr(0,6,display1,1);  //显示接收数据
+					
+		Send_TCP();								//TCP协议发送数据到服务器端口
+	}	
+	
+	while(1);
 }
 
 
@@ -246,6 +240,7 @@ void Second_AT_Command(char *b,char *a,u8 wait_time)
 				shijian = wait_time;
 				Timer0_start = 1;
 		   }
+//		OLED_ShowStr(0,4,(char*)Uart2_Buf,1);	
     }
  	  else
 		{
@@ -268,7 +263,7 @@ void Init_TCP(void)
 {
 	Second_AT_Command("AT+CGATT=1","OK",3);								 //GPRS 附着								
 	Second_AT_Command("AT+CGACT=1,1","OK",3);						 	 //PDP上下文激活
-	Second_AT_Command("AT+CIPSTART=\"TCP\",\"112.74.55.52\",8000","OK",3);	
+	Second_AT_Command("AT+CIPSTART=\"TCP\",\"112.74.55.52\",8000","OK",3);	//AT+CIPSTART="TCP","112.74.55.52",8000
 }
 
 /*******************************************************************************

@@ -463,6 +463,11 @@
               <FileType>1</FileType>
               <FilePath>..\BSP\ADC\adc.c</FilePath>
             </File>
+            <File>
+              <FileName>meter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\meter.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -22,3 +22,4 @@
 .\output\main.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 .\output\main.o: ..\BSP\ADC\adc.h
 .\output\main.o: ..\LIB\inc\stm32f10x_adc.h
+.\output\main.o: meter.h
